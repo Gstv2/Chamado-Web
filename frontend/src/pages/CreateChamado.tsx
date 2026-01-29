@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/Header';
 import api from '../services/api';
 import { TicketPriority } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
 export function CreateChamado() {
     const [titulo, setTitulo] = useState('');
@@ -10,6 +11,7 @@ export function CreateChamado() {
     const [prioridade, setPrioridade] = useState<string>(TicketPriority.BAIXA);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     // Envia o novo chamado para a API
@@ -17,12 +19,15 @@ export function CreateChamado() {
         e.preventDefault();
         setIsSubmitting(true);
 
+        // Se não for admin, não enviamos prioridade (o backend já trata, mas garantimos aqui também)
+        const payload = {
+            titulo,
+            descricao,
+            ...(user?.role === 'ADMIN' && { prioridade }),
+        };
+
         try {
-            await api.post('/chamados', {
-                titulo,
-                descricao,
-                prioridade,
-            });
+            await api.post('/chamados', payload);
             navigate('/dashboard');
         } catch (error: any) {
             console.error('Erro ao criar chamado:', error);
@@ -63,18 +68,20 @@ export function CreateChamado() {
                             ></textarea>
                         </div>
 
-                        <div className="input-group">
-                            <label className="input-label">Prioridade</label>
-                            <select
-                                className="input-field"
-                                value={prioridade}
-                                onChange={(e) => setPrioridade(e.target.value)}
-                            >
-                                <option value={TicketPriority.BAIXA}>Baixa</option>
-                                <option value={TicketPriority.MEDIA}>Média</option>
-                                <option value={TicketPriority.ALTA}>Alta</option>
-                            </select>
-                        </div>
+                        {user?.role === 'ADMIN' && (
+                            <div className="input-group">
+                                <label className="input-label">Prioridade</label>
+                                <select
+                                    className="input-field"
+                                    value={prioridade}
+                                    onChange={(e) => setPrioridade(e.target.value)}
+                                >
+                                    <option value={TicketPriority.BAIXA}>Baixa</option>
+                                    <option value={TicketPriority.MEDIA}>Média</option>
+                                    <option value={TicketPriority.ALTA}>Alta</option>
+                                </select>
+                            </div>
+                        )}
 
                         <div className="flex justify-center">
                             <button

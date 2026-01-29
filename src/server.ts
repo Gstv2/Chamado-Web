@@ -98,6 +98,14 @@ app.setErrorHandler((error: FastifyError, request: FastifyRequest, reply: Fastif
     })
   }
 
+  // Erros de Validação do Fastify (Schema JSON)
+  if (error.validation) {
+    return reply.status(400).send({
+      message: 'Erro de validação.',
+      issues: error.validation
+    })
+  }
+
   // Erros do Fastify/JWT (ex: Token inválido)
   if (error.code === 'FST_JWT_NO_AUTHORIZATION_IN_HEADER' || error.code === 'FST_JWT_AUTHORIZATION_TOKEN_INVALID') {
     return reply.status(401).send({
@@ -119,10 +127,10 @@ export { app, prisma }
 // Inicialização do servidor na porta 3333
 // Apenas inicia se este arquivo for o módulo principal (não importado por testes)
 if (require.main === module) {
-  app.listen({ port: 3333 })
+  app.listen({ port: 3333, host: '0.0.0.0' }) 
     .then(address => {
-      console.log(`🚀 Servidor rodando em: ${address}`)
-      console.log(`📝 Documentação Swagger em: ${address}/documentation`)
+      console.log("🚀 Servidor rodando em: ${address}")
+      console.log("📝 Documentação Swagger em: ${address}/documentation")
     })
     .catch(err => {
       app.log.error(err)

@@ -9,7 +9,12 @@ import { AdminChamados } from '../pages/AdminChamados';
 import { useAuth } from '../contexts/AuthContext';
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, loading } = useAuth(); // Agora pega o loading
+
+    if (loading) {
+        return <div>Carregando...</div>; // Espera a verificação terminar
+    }
+
     return isAuthenticated ? children : <Navigate to="/login" />;
 }
 
@@ -26,3 +31,6 @@ export function AppRoutes() {
         </Routes>
     );
 }
+
+
+

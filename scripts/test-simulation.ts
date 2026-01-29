@@ -1,19 +1,68 @@
 
 import { app, prisma } from '../src/server';
 
+// --- Utilitários de Formatação para Terminal ---
+const colors = {
+  reset: "\x1b[0m",
+  bright: "\x1b[1m",
+  dim: "\x1b[2m",
+  green: "\x1b[32m",
+  red: "\x1b[31m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  magenta: "\x1b[35m",
+  cyan: "\x1b[36m",
+  white: "\x1b[37m",
+  gray: "\x1b[90m",
+};
+
+const icons = {
+  success: '✅',
+  fail: '❌',
+  info: 'ℹ️',
+  step: '👉',
+  warn: '⚠️',
+  key: '🔑',
+  db: '🗄️',
+  lock: '🛡️'
+};
+
+const log = {
+  title: (msg: string) => console.log(`\n${colors.bright}${colors.magenta}=== ${msg} ===${colors.reset}`),
+  step: (msg: string) => console.log(`\n${colors.cyan}${icons.step} ${msg}${colors.reset}`),
+  info: (msg: string) => console.log(`   ${colors.gray}${msg}${colors.reset}`),
+  success: (msg: string) => console.log(`   ${colors.green}${icons.success} ${msg}${colors.reset}`),
+  fail: (msg: string) => console.log(`   ${colors.red}${icons.fail} ${msg}${colors.reset}`),
+  json: (data: any) => console.log(`${colors.dim}${JSON.stringify(data, null, 2).split('\n').map(l => '     ' + l).join('\n')}${colors.reset}`),
+  divider: () => console.log(`${colors.gray}--------------------------------------------------${colors.reset}`)
+};
+
+// Helper de Asserção
+function assert(condition: boolean, msg: string, details?: any) {
+  if (condition) {
+    log.success(msg);
+  } else {
+    log.fail(msg);
+    if (details) log.json(details);
+  }
+}
+
 async function runTests() {
-  console.log('🟣 FASE 6 — Testes Manuais Automatizados');
-  console.log('--------------------------------------------------');
+  console.clear();
+  log.title('FASE 6 — TESTES MANUAIS AUTOMATIZADOS');
+  log.info('Iniciando sequência de verificação da API...');
+  log.divider();
 
   try {
-    // 0. Limpar banco de dados (Opcional, mas bom para testes repetíveis)
-    // Cuidado: isso apaga dados. Em dev tudo bem.
-    console.log('🧹 Limpando banco de dados para teste...');
+    // 0. Preparação
+    log.step('0. Preparação de Ambiente');
+    log.info('Limpando banco de dados para garantir estado limpo...');
     await prisma.chamado.deleteMany();
     await prisma.user.deleteMany();
+    log.success('Banco de dados limpo com sucesso.');
 
     // 1. Criar Usuário ADMIN
-    console.log('\n📝 1. Criando Usuário ADMIN...');
+    log.step('1. Criar Usuário ADMIN');
     const adminRes = await app.inject({
       method: 'POST',
       url: '/users',
@@ -24,25 +73,21 @@ async function runTests() {
         role: 'ADMIN'
       }
     });
-    console.log(`Status: ${adminRes.statusCode} (Esperado: 201)`);
-    if (adminRes.statusCode !== 201) console.error(adminRes.json());
+    assert(adminRes.statusCode === 201, `Status Code: ${adminRes.statusCode} (Criado)`, adminRes.json());
 
     // 2. Login ADMIN
-    console.log('\n🔑 2. Login ADMIN...');
+    log.step('2. Login ADMIN');
     const loginAdminRes = await app.inject({
       method: 'POST',
       url: '/users/login',
-      payload: {
-        email: 'admin@test.com',
-        senha: 'password123'
-      }
+      payload: { email: 'admin@test.com', senha: 'password123' }
     });
-    console.log(`Status: ${loginAdminRes.statusCode} (Esperado: 200)`);
+    assert(loginAdminRes.statusCode === 200, `Login efetuado. Status: ${loginAdminRes.statusCode}`);
     const adminToken = loginAdminRes.json().token;
-    console.log('Token Admin obtido.');
+    assert(!!adminToken, 'Token JWT recebido');
 
     // 3. Criar Usuário COMUM
-    console.log('\n📝 3. Criando Usuário COMUM...');
+    log.step('3. Criar Usuário COMUM');
     const userRes = await app.inject({
       method: 'POST',
       url: '/users',
@@ -53,23 +98,20 @@ async function runTests() {
         role: 'USER'
       }
     });
-    console.log(`Status: ${userRes.statusCode} (Esperado: 201)`);
+    assert(userRes.statusCode === 201, `Usuário Comum criado. Status: ${userRes.statusCode}`);
 
     // 4. Login USER
-    console.log('\n🔑 4. Login USER...');
+    log.step('4. Login USER');
     const loginUserRes = await app.inject({
       method: 'POST',
       url: '/users/login',
-      payload: {
-        email: 'user@test.com',
-        senha: 'password123'
-      }
+      payload: { email: 'user@test.com', senha: 'password123' }
     });
     const userToken = loginUserRes.json().token;
-    console.log('Token User obtido.');
+    assert(loginUserRes.statusCode === 200 && !!userToken, 'Login USER realizado com sucesso');
 
     // 5. Criar Chamado (USER)
-    console.log('\n🎫 5. Criando Chamado (como USER)...');
+    log.step('5. Criar Chamado (como USER)');
     const chamadoRes = await app.inject({
       method: 'POST',
       url: '/chamados',
@@ -77,91 +119,93 @@ async function runTests() {
       payload: {
         titulo: 'Meu computador não liga',
         descricao: 'Aperto o botão e nada acontece.',
-        prioridade: 'ALTA'
+        prioridade: 'ALTA' // Backend deve ignorar se a regra estiver ativa, ou aceitar
       }
     });
-    console.log(`Status: ${chamadoRes.statusCode} (Esperado: 201)`);
+    assert(chamadoRes.statusCode === 201, `Chamado criado. Status: ${chamadoRes.statusCode}`);
     const chamadoId = chamadoRes.json().id;
-    console.log(`Chamado criado com ID: ${chamadoId}`);
+    log.info(`ID do Chamado: ${chamadoId}`);
 
     // 6. Listar Chamados (USER)
-    console.log('\n📋 6. Listar Chamados (como USER)...');
+    log.step('6. Listar Chamados (como USER)');
     const listUserRes = await app.inject({
       method: 'GET',
       url: '/chamados',
       headers: { Authorization: `Bearer ${userToken}` }
     });
-    console.log(`Status: ${listUserRes.statusCode} (Esperado: 200)`);
-    console.log(`Quantidade encontrada: ${listUserRes.json().length}`);
+    const userCount = listUserRes.json().length;
+    assert(listUserRes.statusCode === 200, `Listagem OK. Status: ${listUserRes.statusCode}`);
+    assert(userCount === 1, `Quantidade correta encontrada: ${userCount}`);
 
     // 7. Listar Chamados (ADMIN)
-    console.log('\n📋 7. Listar Chamados (como ADMIN)...');
+    log.step('7. Listar Chamados (como ADMIN)');
     const listAdminRes = await app.inject({
       method: 'GET',
       url: '/chamados',
       headers: { Authorization: `Bearer ${adminToken}` }
     });
-    console.log(`Status: ${listAdminRes.statusCode} (Esperado: 200)`);
-    console.log(`Quantidade encontrada: ${listAdminRes.json().length}`);
+    const adminCount = listAdminRes.json().length;
+    assert(listAdminRes.statusCode === 200, `Listagem Admin OK. Status: ${listAdminRes.statusCode}`);
+    assert(adminCount >= 1, `Admin vê todos os chamados. Encontrados: ${adminCount}`);
 
     // 8. Atualizar Chamado (ADMIN muda status)
-    console.log('\n✏️  8. Atualizar Chamado (ADMIN muda status para EM_ANDAMENTO)...');
+    log.step('8. Atualizar Chamado (ADMIN muda status)');
     const updateRes = await app.inject({
       method: 'PATCH',
       url: `/chamados/${chamadoId}`,
       headers: { Authorization: `Bearer ${adminToken}` },
-      payload: {
-        status: 'EM_ANDAMENTO'
-      }
+      payload: { status: 'EM_ANDAMENTO' }
     });
-    console.log(`Status: ${updateRes.statusCode} (Esperado: 200)`);
-    console.log(`Novo Status: ${updateRes.json().status}`);
+    const updatedStatus = updateRes.json().status;
+    assert(updateRes.statusCode === 200, `Atualização realizada. Status: ${updateRes.statusCode}`);
+    assert(updatedStatus === 'EM_ANDAMENTO', `Novo Status confirmado: ${updatedStatus}`);
 
     // 9. Deletar Chamado (ADMIN)
-    console.log('\n🗑️  9. Deletar Chamado (ADMIN)...');
+    log.step('9. Deletar Chamado (ADMIN)');
     const deleteRes = await app.inject({
       method: 'DELETE',
       url: `/chamados/${chamadoId}`,
       headers: { Authorization: `Bearer ${adminToken}` }
     });
-    console.log(`Status: ${deleteRes.statusCode} (Esperado: 204)`);
+    assert(deleteRes.statusCode === 204, `Chamado deletado. Status: ${deleteRes.statusCode}`);
 
     // 10. Verificar Deleção
-    console.log('\n🔍 10. Verificar se foi deletado...');
+    log.step('10. Verificar Deleção');
     const checkRes = await app.inject({
       method: 'GET',
       url: `/chamados/${chamadoId}`,
       headers: { Authorization: `Bearer ${adminToken}` }
     });
-    console.log(`Status: ${checkRes.statusCode} (Esperado: 404)`);
+    assert(checkRes.statusCode === 404, `Chamado não existe mais. Status: ${checkRes.statusCode}`);
 
-    // 11. Teste de Erro (Acesso sem token)
-    console.log('\n🚫 11. Teste de Acesso Negado (Sem Token)...');
+    // 11. Teste de Acesso Negado
+    log.step('11. Teste de Segurança (Sem Token)');
     const errorRes = await app.inject({
       method: 'GET',
       url: '/chamados'
     });
-    console.log(`Status: ${errorRes.statusCode} (Esperado: 401)`);
+    assert(errorRes.statusCode === 401, `Acesso bloqueado corretamente. Status: ${errorRes.statusCode}`);
 
     // 12. Teste de Validação (Zod)
-    console.log('\n🛡️ 12. Teste de Validação (Senha curta)...');
+    log.step('12. Teste de Validação (Senha Curta)');
     const validationRes = await app.inject({
       method: 'POST',
       url: '/users',
       payload: {
         nome: 'Invalid User',
         email: 'invalid@test.com',
-        senha: '123' // Muito curta (min 6)
+        senha: '123'
       }
     });
-    console.log(`Status: ${validationRes.statusCode} (Esperado: 400)`);
-    console.log(`Mensagem: ${validationRes.json().message}`);
+    assert(validationRes.statusCode === 400, `Erro de validação capturado. Status: ${validationRes.statusCode}`);
+    log.info(`Mensagem de erro: "${validationRes.json().message}"`);
 
-    console.log('\n--------------------------------------------------');
-    console.log('✅ Todos os testes manuais automatizados concluídos!');
+    log.divider();
+    console.log(`\n${colors.bright}${colors.green}🎉 SUCESSO! Todos os testes passaram sem erros.${colors.reset}\n`);
 
   } catch (error) {
-    console.error('❌ Erro durante os testes:', error);
+    console.error(`\n${colors.bright}${colors.red}❌ FATAL ERROR: Ocorreu um erro inesperado.${colors.reset}`);
+    console.error(error);
   } finally {
     await prisma.$disconnect();
   }

@@ -2,14 +2,22 @@ import { useEffect, useState } from 'react';
 import { Header } from '../components/Header';
 import api from '../services/api';
 import { type Chamado, TicketStatus } from '../types';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export function AdminChamados() {
     const [tickets, setTickets] = useState<Chamado[]>([]);
     const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (user && user.role !== 'ADMIN') {
+            navigate('/dashboard');
+            return;
+        }
         fetchTickets();
-    }, []);
+    }, [user, navigate]);
 
     // Busca todos os chamados (Admin tem acesso a tudo)
     async function fetchTickets() {

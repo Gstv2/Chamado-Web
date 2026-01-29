@@ -44,6 +44,15 @@ export class ChamadoService {
       throw new AppError('Operação não permitida.', 403);
     }
 
+    // Regra de Negócio: Usuário comum NÃO pode alterar status nem prioridade
+    if (role !== 'ADMIN') {
+        if (data.status || data.prioridade) {
+            // Removemos os campos proibidos do objeto de atualização
+            delete data.status;
+            delete data.prioridade;
+        }
+    }
+
     return this.chamadoRepository.update(id, data);
   }
 

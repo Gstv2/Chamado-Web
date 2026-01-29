@@ -3,10 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Header } from '../components/Header';
 import api from '../services/api';
 import { TicketPriority, TicketStatus, type Chamado } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
 export function EditChamado() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const [titulo, setTitulo] = useState('');
     const [descricao, setDescricao] = useState('');
@@ -42,15 +44,16 @@ export function EditChamado() {
         e.preventDefault();
         setIsSubmitting(true);
 
-        console.log('Tentando atualizar chamado:', { id, titulo, descricao, prioridade, status });
+        const payload = {
+            titulo,
+            descricao,
+            ...(user?.role === 'ADMIN' && { prioridade, status })
+        };
+
+        console.log('Tentando atualizar chamado:', { id, ...payload });
 
         try {
-            await api.patch(`/chamados/${id}`, {
-                titulo,
-                descricao,
-                prioridade,
-                status
-            });
+            await api.patch(`/chamados/${id}`, payload);
             navigate('/dashboard');
         } catch (error: any) {
             console.error('Erro ao atualizar chamado:', error);
@@ -100,29 +103,40 @@ export function EditChamado() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="input-group">
                                 <label className="input-label">Prioridade</label>
-                                <select
-                                    className="input-field"
-                                    value={prioridade}
-                                    onChange={(e) => setPrioridade(e.target.value)}
-                                >
-                                    <option value={TicketPriority.BAIXA}>Baixa</option>
-                                    <option value={TicketPriority.MEDIA}>Média</option>
-                                    <option value={TicketPriority.ALTA}>Alta</option>
-                                </select>
+                                {user?.role === 'ADMIN' ? (
+                                    <select
+                                        className="input-field"
+                                        value={prioridade}
+                                        onChange={(e) => setPrioridade(e.target.value)}
+                                    >
+                                        <option value={TicketPriority.BAIXA}>Baixa</option>
+                                        <option value={TicketPriority.MEDIA}>Média</option>
+                                        <option value={TicketPriority.ALTA}>Alta</option>
+                                    </select>
+                                ) : (
+                                    <div className="p-3 bg-gray-100 rounded border border-gray-200 text-gray-700">
+                                        {prioridade}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="input-group">
                                 <label className="input-label">Status</label>
-                                <select
-                                    className="input-field"
-                                    value={status}
-                                    onChange={(e) => setStatus(e.target.value)}
-                                    disabled={status === TicketStatus.FECHADO} // Se já fechado, talvez não deva reabrir por aqui? Deixarei aberto.
-                                >
-                                    <option value={TicketStatus.ABERTO}>Aberto</option>
-                                    <option value={TicketStatus.EM_ANDAMENTO}>Em Andamento</option>
-                                    <option value={TicketStatus.FECHADO}>Fechado</option>
-                                </select>
+                                {user?.role === 'ADMIN' ? (
+                                    <select
+                                        className="input-field"
+                                        value={status}
+                                        onChange={(e) => setStatus(e.target.value)}
+                                    >
+                                        <option value={TicketStatus.ABERTO}>Aberto</option>
+                                        <option value={TicketStatus.EM_ANDAMENTO}>Em Andamento</option>
+                                        <option value={TicketStatus.FECHADO}>Fechado</option>
+                                    </select>
+                                ) : (
+                                    <div className="p-3 bg-gray-100 rounded border border-gray-200 text-gray-700">
+                                        {status.replace('_', ' ')}
+                                    </div>
+                                )}
                             </div>
                         </div>
 

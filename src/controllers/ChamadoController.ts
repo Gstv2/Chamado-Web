@@ -18,12 +18,19 @@ export class ChamadoController {
     const { titulo, descricao, prioridade } = createChamadoSchema.parse(request.body);
     
     // O ID do usuário vem do token JWT (middleware ensureAuthenticated)
-    const user = request.user as { sub: string }; 
+    const user = request.user as { sub: string; role: string }; 
+
+    // Regra de Negócio: Apenas ADMIN pode definir prioridade na criação.
+    // Se for USER, forçamos 'MEDIA' (ou ignoramos o input)
+    let prioridadeFinal = prioridade;
+    if (user.role !== 'ADMIN') {
+        prioridadeFinal = 'MEDIA';
+    }
 
     const data: Prisma.ChamadoCreateInput = {
       titulo,
       descricao,
-      prioridade: prioridade || 'MEDIA',
+      prioridade: prioridadeFinal || 'MEDIA',
       usuario: {
         connect: { id: user.sub }
       }
