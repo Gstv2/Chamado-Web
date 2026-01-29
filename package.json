@@ -1,0 +1,40 @@
+{
+  "name": "chamado-web",
+  "version": "1.0.0",
+  "description": "Final coursework project - Web Application",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.19.7",
+    "prisma": "^5.17.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@fastify/jwt": "^10.0.0",
+    "@fastify/swagger": "^9.6.1",
+    "@fastify/swagger-ui": "^5.2.5",
+    "@prisma/client": "^5.17.0",
+    "bcryptjs": "^3.0.3",
+    "fastify": "^5.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gstv2/Chamado-Web.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Gstv2/Chamado-Web/issues"
+  },
+  "homepage": "https://github.com/Gstv2/Chamado-Web#readme"
+}
