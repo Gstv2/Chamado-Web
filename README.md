@@ -201,6 +201,15 @@ A interface do usuário é uma Single Page Application (SPA).
 3.  Acesse a aplicação no navegador:
     *   Geralmente em: `http://localhost:5173`
 
+## 👤 Usuários de Teste
+
+Após rodar o comando `npm run seed`, os seguintes usuários estarão disponíveis para teste:
+
+| Role  | Email               | Senha      | Permissões                                      |
+| :---: | :------------------ | :--------- | :---------------------------------------------- |
+| ADMIN | `admin@example.com` | `admin123` | Acesso total (Dashboard administrativo)         |
+| USER  | `user@example.com`  | `user123`  | Acesso limitado (Meus Chamados, Novo Chamado)   |
+
 ## 🧪 Testes
 
 ### Testes de Simulação (Backend)
