@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Chamado Web</title>
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/pages/login.css">
+</head>
+<body class="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      Chamado Web
+    </div>
+    <h2 class="login-subtitle">Login</h2>
+    
+    <form id="login-form">
+      <div class="form-group text-left" style="text-align: left;">
+        <label class="form-label">Email</label>
+        <input type="email" id="email" class="form-control" placeholder="admin@admin.com" value="admin@admin.com" required>
+      </div>
+      
+      <div class="form-group text-left" style="text-align: left;">
+        <label class="form-label">Senha</label>
+        <input type="password" id="password" class="form-control" placeholder="******" value="123456" required>
+      </div>
+      
+      <button type="submit" class="btn btn-primary w-100">Entrar</button>
+    </form>
+    
+    <div class="login-footer">
+      Não tem uma conta? <a href="#">Cadastre-se</a>
+    </div>
+  </div>
+
+  <script type="module" src="../assets/js/pages/login.js"></script>
+</body>
+</html>

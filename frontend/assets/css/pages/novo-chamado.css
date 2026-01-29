@@ -1,0 +1,189 @@
+/* Modal Card Styles */
+.modal-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  max-width: 800px;
+  margin: 20px auto;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-close:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+/* Custom Dropdown */
+.custom-select-wrapper {
+  position: relative;
+  user-select: none;
+  width: 100%;
+}
+
+.custom-select {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-select-trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.custom-select-trigger:hover {
+  border-color: #b0b0b0;
+}
+
+.custom-options {
+  position: absolute;
+  display: block;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border: 1px solid var(--border-color);
+  border-top: 0;
+  background: #fff;
+  transition: all 0.2s;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  margin-top: 4px;
+}
+
+.custom-select.open .custom-options {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+  top: calc(100% + 4px);
+}
+
+.custom-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.custom-option:hover {
+  background-color: var(--bg-secondary);
+}
+
+.custom-option.selected {
+  background-color: var(--bg-secondary);
+  font-weight: 500;
+}
+
+/* Priority Badges in Dropdown */
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 10px;
+  display: inline-block;
+}
+
+.priority-baixa .badge-dot { background-color: var(--success); }
+.priority-media .badge-dot { background-color: var(--warning); }
+.priority-alta .badge-dot { background-color: var(--danger); }
+
+.priority-baixa { color: var(--success); background-color: rgba(34, 197, 94, 0.1); border-radius: 4px; padding: 2px 8px; display: inline-flex; align-items: center; font-size: 0.85rem; font-weight: 500;}
+.priority-media { color: var(--warning); background-color: rgba(245, 158, 11, 0.1); border-radius: 4px; padding: 2px 8px; display: inline-flex; align-items: center; font-size: 0.85rem; font-weight: 500;}
+.priority-alta { color: var(--danger); background-color: rgba(239, 68, 68, 0.1); border-radius: 4px; padding: 2px 8px; display: inline-flex; align-items: center; font-size: 0.85rem; font-weight: 500;}
+
+/* Dropdown Arrow */
+.arrow {
+  position: relative;
+  height: 10px;
+  width: 10px;
+}
+
+.arrow::before, .arrow::after {
+  content: "";
+  position: absolute;
+  bottom: 0px;
+  width: 0.15rem;
+  height: 100%;
+  transition: all 0.2s;
+}
+
+.arrow::before {
+  left: -3px;
+  transform: rotate(-45deg);
+  background-color: #999;
+}
+
+.arrow::after {
+  left: 3px;
+  transform: rotate(45deg);
+  background-color: #999;
+}
+
+.open .arrow::before {
+  left: -3px;
+  transform: rotate(45deg);
+}
+
+.open .arrow::after {
+  left: 3px;
+  transform: rotate(-45deg);
+}
+
+/* Form footer */
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}

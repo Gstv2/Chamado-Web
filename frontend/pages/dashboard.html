@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Chamado Web</title>
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/pages/dashboard.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Chamado Web
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item active">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a href="chamados.html" class="nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Meus Chamados
+        </a>
+        <a href="perfil.html" class="nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Meu Perfil
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        Frontend Template
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="topbar">
+        <div class="d-flex align-center">
+          <button class="btn-mobile-toggle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <h1 class="page-title">Dashboard</h1>
+        </div>
+        
+        <div class="user-menu">
+          <div class="user-info">
+            <span class="user-name">Usuário</span>
+            <div class="user-avatar">
+              <img src="https://ui-avatars.com/api/?name=User&background=random" alt="Avatar">
+            </div>
+          </div>
+        </div>
+      </header>
+      
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="card metric-card bg-blue">
+          <span class="metric-title">Chamados Abertos</span>
+          <span class="metric-value" id="count-aberto">0</span>
+        </div>
+        <div class="card metric-card bg-orange">
+          <span class="metric-title">Em Andamento</span>
+          <span class="metric-value" id="count-andamento">0</span>
+        </div>
+        <div class="card metric-card bg-green">
+          <span class="metric-title">Fechados</span>
+          <span class="metric-value" id="count-fechado">0</span>
+        </div>
+      </div>
+      
+      <!-- Recent Tickets -->
+      <div class="dashboard-section-header">
+        <h2>Últimos Chamados</h2>
+        <a href="novo-chamado.html" class="btn btn-primary">Novo Chamado</a>
+      </div>
+      
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <div class="table-container">
+          <table id="tickets-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Status</th>
+                <th>Prioridade</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="../assets/js/main.js"></script>
+  <script type="module" src="../assets/js/pages/dashboard.js"></script>
+</body>
+</html>

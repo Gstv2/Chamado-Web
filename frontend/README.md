@@ -1,73 +1,82 @@
-# React + TypeScript + Vite
+Este é um template de front-end para o sistema HelpDesk+, desenvolvido com HTML5, CSS3 e JavaScript (ES Modules) puro, sem uso de frameworks.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Estrutura do Projeto
 
-Currently, two official plugins are available:
+O projeto segue uma estrutura organizada e modular:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## React Compiler
+frontend/
+├── assets/
+│   ├── css/
+│   │   ├── base.css        # Variáveis e reset
+│   │   ├── layout.css      # Estrutura (Sidebar, Topbar)
+│   │   ├── components.css  # Componentes (Cards, Botões, Tabelas)
+│   │   └── pages/          # Estilos específicos de páginas
+│   │       ├── chamados.css      # Estilos do modal e lista
+│   │       ├── dashboard.css     # Estilos do painel
+│   │       ├── login.css         # Estilos do login
+│   │       └── novo-chamado.css  # Estilos do formulário e dropdown
+│   └── js/
+│       ├── api.js          # Integração com API REST (Fetch)
+│       ├── auth.js         # Controle de autenticação e sessão
+│       ├── config.js       # Configurações globais (API URL)
+│       └── pages/          # Lógica específica de páginas
+├── pages/
+│   ├── login.html          # Tela de Login
+│   ├── dashboard.html      # Painel Principal
+│   ├── chamados.html       # Listagem de Chamados
+│   ├── novo-chamado.html   # Formulário de Criação
+│   └── perfil.html         # Perfil do Usuário
+└── index.html              # Redirecionamento inicial
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
+## Configuração da API
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+O projeto está configurado para consumir a API REST em:
+*http://44.215.110.144:3333*
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Para alterar a URL da API, edite o arquivo assets/js/config.js.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Como Executar
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Para rodar o projeto corretamente (evitando bloqueios de segurança do navegador/CORS), é necessário usar um servidor local.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+*Opção 1 (Node.js instalado):*
+1. Abra o terminal na pasta do projeto (frontend).
+2. Execute:
+   bash
+   npx serve .
+   
+3. Acesse http://localhost:3000
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+*Opção 2 (VS Code):*
+1. Instale a extensão *Live Server*.
+2. Clique com o botão direito em index.html e escolha "Open with Live Server".
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+*Opção 3 (Python instalado):*
+1. Execute no terminal:
+   bash
+   python -m http.server 3000
+   
+2. Acesse http://localhost:3000
+
+### Credenciais para Teste
+
+Utilize as credenciais cadastradas na API:
+
+*Administrador*:
+- Email: admin@admin.com
+- Senha: 123456
+
+*Usuário Comum*:
+- Email: user@user.com
+- Senha: 123456
+
+## Funcionalidades
+
+- *Autenticação*: Login com JWT e persistência em localStorage.
+- *Controle de Acesso*: Diferenciação visual e funcional entre ADMIN e USER.
+- *Gestão de Chamados*: Edição de status/prioridade via modal (Admin) e visualização detalhada (User).
+- *UI Personalizada*: Selects customizados e Badges de status.
+- *Layout Responsivo*: Sidebar colapsável em dispositivos móveis.
+- *Integração Real*: Consumo de endpoints REST (/auth, /chamados).
