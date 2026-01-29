@@ -138,3 +138,42 @@ npx ts-node scripts/test-simulation.ts
 ```
 
 > **Nota**: O script limpa o banco de dados antes de rodar os testes. Use apenas em ambiente de desenvolvimento.
+
+## 🖥️ Front-end (Fase 7)
+
+O front-end está localizado na pasta `/frontend` e foi desenvolvido com React + TypeScript (Vite).
+
+### ⚙️ Pré-requisitos
+- O backend deve estar rodando (localmente ou na AWS).
+- O backend agora possui **CORS habilitado** para aceitar requisições do frontend.
+
+### 🚀 Como Rodar o Front-end
+1. Entre na pasta do frontend:
+   ```bash
+   cd frontend
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Crie um arquivo `.env` na raiz da pasta `frontend` para configurar a URL da API:
+   - Para rodar localmente:
+     ```env
+     VITE_API_URL=http://localhost:3333
+     ```
+   - Para rodar conectado à AWS (quando o deploy estiver feito):
+     ```env
+     VITE_API_URL=http://seu-ip-ou-dominio-aws:3333
+     ```
+4. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+5. Acesse http://localhost:5173 no seu navegador.
+
+### ☁️ Integração com AWS
+O projeto foi preparado para que o backend seja hospedado na AWS (EC2, App Runner, etc).
+Para integrar o front-end (local ou também na nuvem) com o backend na AWS:
+1. Faça o deploy do backend na AWS.
+2. Obtenha o IP público ou domínio da instância.
+3. Atualize a variável `VITE_API_URL` no arquivo `.env` do frontend.

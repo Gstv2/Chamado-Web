@@ -1,4 +1,5 @@
 import Fastify, { FastifyError, FastifyReply, FastifyRequest } from 'fastify'
+import cors from '@fastify/cors'
 import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
 import jwt from '@fastify/jwt'
@@ -23,6 +24,12 @@ app.addHook('onClose', async () => {
   await prisma.$disconnect()
 })
 
+// 2.1 Configuração do CORS
+// Permite que o frontend (ex: localhost:5173) faça requisições para este backend
+app.register(cors, {
+  origin: true // Em produção, substitua por uma lista de domínios permitidos (ex: ['https://meuapp.com'])
+})
+
 // 3. Configuração do JWT (JSON Web Token)
 // Registra o plugin JWT com uma chave secreta (deve ser movida para .env em produção)
 app.register(jwt, {
@@ -37,6 +44,15 @@ app.register(swagger, {
       title: 'API de Chamados',
       description: 'Documentação da API de Chamados com Fastify, TypeScript e Prisma/SQLite.',
       version: '1.0.0'
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
     }
   }
 })
