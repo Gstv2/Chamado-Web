@@ -27,4 +27,24 @@ export class ChamadoRepository implements IChamadoRepository {
       where: { usuarioId: userId },
     });
   }
+
+  async findById(id: string): Promise<Chamado | null> {
+    return this.prisma.chamado.findUnique({
+      where: { id },
+      include: { usuario: true },
+    });
+  }
+
+  async update(id: string, data: Prisma.ChamadoUpdateInput): Promise<Chamado> {
+    return this.prisma.chamado.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prisma.chamado.delete({
+      where: { id },
+    });
+  }
 }
