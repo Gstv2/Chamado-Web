@@ -12,6 +12,7 @@ export function CreateChamado() {
 
     const navigate = useNavigate();
 
+    // Envia o novo chamado para a API
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -23,9 +24,10 @@ export function CreateChamado() {
                 prioridade,
             });
             navigate('/dashboard');
-        } catch (error) {
+        } catch (error: any) {
             console.error('Erro ao criar chamado:', error);
-            alert('Erro ao criar chamado');
+            const message = error.response?.data?.message || error.message || 'Erro ao criar chamado';
+            alert(message);
         } finally {
             setIsSubmitting(false);
         }

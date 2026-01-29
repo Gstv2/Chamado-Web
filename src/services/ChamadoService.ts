@@ -33,20 +33,32 @@ export class ChamadoService {
   }
 
   // Atualiza um chamado
-  async update(id: string, data: Prisma.ChamadoUpdateInput): Promise<Chamado> {
+  async update(id: string, data: Prisma.ChamadoUpdateInput, userId: string, role: string): Promise<Chamado> {
     const chamado = await this.chamadoRepository.findById(id);
     if (!chamado) {
       throw new AppError('Chamado não encontrado.', 404);
     }
+
+    // Verifica permissão: Admin pode tudo, Usuário só o dele
+    if (role !== 'ADMIN' && chamado.usuarioId !== userId) {
+      throw new AppError('Operação não permitida.', 403);
+    }
+
     return this.chamadoRepository.update(id, data);
   }
 
-  // Remove um chamado (apenas Admin, verificado no controller/middleware, mas aqui garantimos existência)
-  async delete(id: string): Promise<void> {
+  // Remove um chamado
+  async delete(id: string, userId: string, role: string): Promise<void> {
     const chamado = await this.chamadoRepository.findById(id);
     if (!chamado) {
       throw new AppError('Chamado não encontrado.', 404);
     }
+
+    // Verifica permissão: Admin pode tudo, Usuário só o dele
+    if (role !== 'ADMIN' && chamado.usuarioId !== userId) {
+      throw new AppError('Operação não permitida.', 403);
+    }
+
     await this.chamadoRepository.delete(id);
   }
 }

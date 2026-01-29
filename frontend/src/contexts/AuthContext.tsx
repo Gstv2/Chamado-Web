@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from '
 import api from '../services/api';
 import type { User, AuthResponse } from '../types';
 
+// Interface que define o formato do contexto de autenticação
 interface AuthContextType {
     isAuthenticated: boolean;
     user: User | null;
@@ -10,12 +11,16 @@ interface AuthContextType {
     loading: boolean;
 }
 
+// Criação do Contexto
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Provider: Componente que envolve a aplicação e fornece o estado de autenticação
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
+    // Efeito para restaurar a sessão ao recarregar a página
+    // Verifica se existem dados salvos no localStorage
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         const token = localStorage.getItem('token');
@@ -23,6 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (storedUser && token && storedUser !== 'undefined') {
             try {
                 setUser(JSON.parse(storedUser));
+                // Restaura o token no header padrão do axios
                 api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             } catch (error) {
                 console.error('Erro ao restaurar sessão:', error);
@@ -38,11 +44,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false);
     }, []);
 
+    // Função de Login
     const login = async (email: string, pass: string) => {
         try {
             const response = await api.post<AuthResponse>('/users/login', { email, senha: pass });
             const { user: apiUser, token } = response.data;
 
+            // Salva dados no LocalStorage para persistência
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(apiUser));
 
@@ -54,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    // Função de Logout
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -68,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 }
 
+// Hook personalizado para facilitar o uso do contexto
 export function useAuth() {
     const context = useContext(AuthContext);
     if (!context) {

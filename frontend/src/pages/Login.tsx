@@ -12,12 +12,14 @@ export function Login() {
     const { login } = useAuth();
     const navigate = useNavigate();
 
+    // Manipula o envio do formulário de login
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setIsSubmitting(true);
 
         try {
+            // Chama a função login do contexto, que trata a API e o armazenamento do token
             await login(email, password);
             navigate('/dashboard');
         } catch (err) {

@@ -56,23 +56,35 @@ export class ChamadoController {
   // Método para atualizar um chamado (status/prioridade)
   async update(request: FastifyRequest, reply: FastifyReply) {
     const { id } = request.params as { id: string };
-    const { status, prioridade, titulo, descricao } = updateChamadoSchema.parse(request.body);
+    console.log(`[ChamadoController] Tentativa de atualizar chamado ${id}`);
+    
+    try {
+      const { status, prioridade, titulo, descricao } = updateChamadoSchema.parse(request.body);
+      const user = request.user as { sub: string; role: string };
+      console.log(`[ChamadoController] User: ${user.sub}, Role: ${user.role}, Body:`, request.body);
 
-    // Prepara objeto de update apenas com campos fornecidos
-    const data: Prisma.ChamadoUpdateInput = {};
-    if (status) data.status = status;
-    if (prioridade) data.prioridade = prioridade;
-    if (titulo) data.titulo = titulo;
-    if (descricao) data.descricao = descricao;
+      // Prepara objeto de update apenas com campos fornecidos
+      const data: Prisma.ChamadoUpdateInput = {};
+      if (status) data.status = status;
+      if (prioridade) data.prioridade = prioridade;
+      if (titulo) data.titulo = titulo;
+      if (descricao) data.descricao = descricao;
 
-    const chamado = await this.chamadoService.update(id, data);
-    return reply.send(chamado);
+      const chamado = await this.chamadoService.update(id, data, user.sub, user.role);
+      console.log(`[ChamadoController] Chamado atualizado com sucesso`);
+      return reply.send(chamado);
+    } catch (err) {
+      console.error(`[ChamadoController] Erro ao atualizar chamado:`, err);
+      throw err;
+    }
   }
 
-  // Método para deletar um chamado (Admin apenas)
+  // Método para deletar um chamado (Admin ou Dono)
   async delete(request: FastifyRequest, reply: FastifyReply) {
     const { id } = request.params as { id: string };
-    await this.chamadoService.delete(id);
+    const user = request.user as { sub: string; role: string };
+    
+    await this.chamadoService.delete(id, user.sub, user.role);
     return reply.status(204).send(); // No Content
   }
 }

@@ -2,70 +2,66 @@
 
 Sistema de gerenciamento de chamados para centralizar solicitações de suporte, desenvolvido como trabalho final da disciplina de Desenvolvimento Web.
 
-##  Introdução
+## 📖 Introdução
 Este projeto surge da necessidade de organizar o fluxo de solicitações de TI em pequenas e médias empresas, onde muitas vezes os pedidos são feitos de forma informal (WhatsApp, verbalmente ou anotações em papel).
 
-O **Chamado Web** é uma API RESTful robusta que permite o registro, acompanhamento e gestão dessas solicitações de forma centralizada, segura e auditável. O sistema foi projetado focando em boas práticas de engenharia de software, separação de responsabilidades e escalabilidade.
+O **Chamado Web** é uma solução Full Stack (Backend API + Frontend React) que permite o registro, acompanhamento e gestão dessas solicitações de forma centralizada, segura e auditável. O sistema foi projetado focando em boas práticas de engenharia de software, separação de responsabilidades e escalabilidade.
 
-##  Objetivo
-Resolver o problema de descentralização de pedidos de suporte criando uma aplicação web simples e eficiente para registro e acompanhamento.
+## 🎯 Objetivo
+Resolver o problema de descentralização de pedidos de suporte criando uma aplicação web simples e eficiente para registro e acompanhamento de chamados (tickets).
 
 ## 📈 Estratégia de Desenvolvimento
-O desenvolvimento foi conduzido de forma incremental e iterativa, dividido em **Fases** bem definidas para garantir a entrega contínua de valor e a facilidade de manutenção.
+O desenvolvimento foi conduzido de forma incremental e iterativa, garantindo entrega contínua de valor.
 
-1.  **Foco no MVP (Minimum Viable Product)**: Priorizamos as funcionalidades essenciais (CRUD de Chamados e Usuários) nas primeiras fases.
-2.  **Arquitetura Evolutiva**: Começamos com uma estrutura simples e refatoramos para uma arquitetura em camadas (Controller-Service-Repository) na Fase 4, quando a complexidade exigiu.
-3.  **Segurança e Robustez**: Implementamos autenticação (JWT) e validação rigorosa (Zod) apenas após ter o núcleo funcional, garantindo que a base estivesse sólida.
-4.  **Qualidade de Código**: Uso de TypeScript para tipagem estática, ESLint (implícito) e Prettier para padronização, e comentários educativos em todo o código.
+1.  **Foco no MVP (Minimum Viable Product)**: Priorizamos as funcionalidades essenciais (CRUD de Chamados e Usuários).
+2.  **Arquitetura Evolutiva**: Adotamos uma arquitetura em camadas (Controller-Service-Repository) para o Backend.
+3.  **Segurança e Robustez**: Autenticação JWT, validação com Zod e tratamento global de erros.
+4.  **Interface Amigável**: Frontend moderno com React e Tailwind CSS.
 
-##  Arquitetura e Tecnologias
+## 🏗️ Arquitetura e Tecnologias
 
 ### Back End
+O servidor é uma API RESTful robusta.
 - **Linguagem**: TypeScript (Node.js)
-- **Framework Web**: Fastify (Alta performance e baixo overhead)
-- **ORM**: Prisma (Segurança de tipos e facilidade de migração)
-- **Banco de Dados**: SQLite (Ideal para desenvolvimento e prototipagem rápida)
-- **Autenticação**: JWT (@fastify/jwt) + Bcrypt (bcryptjs)
-- **Documentação**: Swagger UI (@fastify/swagger)
+- **Framework Web**: Fastify (Alta performance)
+- **ORM**: Prisma (Segurança de tipos)
+- **Banco de Dados**: SQLite (Desenvolvimento) / PostgreSQL (Produção - compatível)
+- **Autenticação**: JWT (@fastify/jwt) + Bcrypt
 - **Validação**: Zod (Schema Validation)
 
-### Padrões de Projeto (Design Patterns)
-O projeto aplica diversos padrões de projeto clássicos e modernos para resolver problemas comuns de arquitetura:
+**Padrões de Projeto (Backend):**
+*   **Repository Pattern**: Abstração do acesso a dados. Permite trocar o banco sem afetar regras de negócio.
+*   **Service Layer**: Centraliza as regras de negócio. Controllers apenas lidam com HTTP.
+*   **Dependency Injection**: Injeção de dependências para desacoplamento e testabilidade.
+*   **DTO (Data Transfer Object)**: Transporte seguro de dados entre camadas.
 
-1.  **Repository Pattern**:
-    *   **Problema**: Código de negócio acoplado diretamente ao banco de dados.
-    *   **Solução**: Abstração do acesso a dados em classes `Repository`. Permite trocar o ORM ou o Banco sem afetar as regras de negócio.
+### Front End
+A interface do usuário é uma Single Page Application (SPA).
+- **Framework**: React (Vite)
+- **Linguagem**: TypeScript
+- **Estilização**: Tailwind CSS (Utilitários para design rápido)
+- **Roteamento**: React Router DOM
+- **Consumo de API**: Axios
 
-2.  **Service Layer (Business Logic Layer)**:
-    *   **Problema**: Regras de negócio espalhadas nos Controllers.
-    *   **Solução**: Centralização de toda a lógica (validações de negócio, cálculos) em classes `Service`. Os Controllers tornam-se apenas "porteiros" HTTP.
+**Arquitetura do Frontend:**
+*   **Component-Based**: Interface construída em pequenos blocos reutilizáveis (`Header`, `Logo`, etc.).
+*   **Context API (`AuthContext`)**: Gerenciamento global do estado de autenticação (Login/Logout) persistente.
+*   **Services Pattern (`api.ts`)**: Centralização da configuração do Axios e interceptadores de erros.
 
-3.  **Dependency Injection (DI)**:
-    *   **Problema**: Alto acoplamento entre classes (Service criando instância de Repository com `new`).
-    *   **Solução**: As dependências são injetadas via construtor (ex: `UserService` recebe `IUserRepository`). Facilita testes unitários (Mocking).
+## 📊 Modelo de Dados
 
-4.  **Singleton**:
-    *   **Uso**: O `PrismaClient` é instanciado uma única vez em `server.ts` e compartilhado por toda a aplicação para gerenciar eficientemente o pool de conexões.
+### 1. User (Usuários)
+- **Tipos**: `USER` (Comum), `ADMIN` (Administrador)
+- **Funcionalidades**:
+    - **Registro**: Criação de conta (`/users`).
+    - **Autenticação**: Login com JWT (`/users/login`).
 
-5.  **DTO (Data Transfer Object)**:
-    *   **Uso**: Objetos simples (frequentemente inferidos pelo Zod ou interfaces manuais) usados para transportar dados entre as camadas, garantindo que a senha do usuário não trafegue na resposta, por exemplo.
-
-6.  **Adapter Pattern**:
-    *   **Uso**: O Fastify atua como um adaptador HTTP, e nossos Controllers adaptam as requisições Web para chamadas de método nos Services.
-
-##  Modelo de Dados
-
-### Entidades Principais
-1. **User** (Usuários)
-   - Tipos: `USER` (Comum), `ADMIN` (Administrador)
-   - Campos: id, nome, email, senha, role, created_at.
-   - Relacionamento: Possui muitos Chamados (1:N).
-
-2. **Chamado** (Tickets)
-   - Status: `ABERTO`, `EM_ANDAMENTO`, `FECHADO`
-   - Prioridade: `BAIXA`, `MEDIA`, `ALTA`
-   - Campos: id, titulo, descricao, status, prioridade, usuarioId.
-   - Relacionamento: Pertence a um Usuário.
+### 2. Chamado (Tickets)
+- **Status**: `ABERTO` ➝ `EM_ANDAMENTO` ➝ `FECHADO`
+- **Prioridade**: `BAIXA`, `MEDIA`, `ALTA`
+- **Permissões**:
+    - **Usuário Comum**: Cria, visualiza, edita e exclui **apenas seus próprios chamados**.
+    - **Administrador**: Visualiza **todos**, resolve (status `FECHADO`) e exclui **qualquer chamado**.
 
 ##  Status do Projeto
 
@@ -103,77 +99,91 @@ O projeto aplica diversos padrões de projeto clássicos e modernos para resolve
 - **Correções de Bugs**: Ajuste de rotas (PUT -> PATCH) e validações.
 - **Refinamento**: Revisão de código e comentários.
 
-##  Como Rodar
 
-1. **Instale as dependências**:
-   ```bash
-   npm install
-   ```
+## 🚀 Como Rodar o Projeto
 
-2. **Gere o cliente Prisma**:
-   ```bash
-   npx prisma generate
-   ```
+### Pré-requisitos
+- Node.js instalado (v16 ou superior).
+- Gerenciador de pacotes `npm`.
 
-3. **Configure o banco de dados** (Migração e Seed):
-   ```bash
-   npx prisma migrate dev
-   npx tsx prisma/seed.ts
-   ```
+### Passo 1: Configurar e Rodar o Backend
 
-4. **Inicie o servidor**:
-   ```bash
-   npm run dev
-   ```
+1.  Acesse a pasta raiz do projeto:
+    ```bash
+    # Instalar dependências do servidor
+    npm install
+    ```
 
-5. **Acesse a documentação**:
-   Abra `http://localhost:3333/documentation` no navegador para ver e testar a API via Swagger.
+2.  Configure o banco de dados (Prisma):
+    ```bash
+    # Gera o cliente do Prisma (Tipagem)
+    npx prisma generate
 
-##  Como Testar (Testes Automatizados)
+    # Cria as tabelas no banco de dados SQLite
+    npx prisma migrate dev
 
-Para rodar a suite de testes de simulação (que testa login, criação, listagem, atualização e deleção):
+    # Popula o banco com dados iniciais (Seed)
+    # Cria usuário Admin padrão e alguns chamados
+    npm run seed
+    ```
+
+3.  Inicie o servidor:
+    ```bash
+    # Roda o servidor na porta 3333
+    npm run dev
+    ```
+    *O Backend estará rodando em `http://localhost:3333`*
+
+### Passo 2: Configurar e Rodar o Frontend
+
+1.  Em outro terminal, acesse a pasta `frontend`:
+    ```bash
+    cd frontend
+    
+    # Instalar dependências do frontend
+    npm install
+    ```
+
+2.  Inicie o servidor de desenvolvimento:
+    ```bash
+    # Roda o Vite
+    npm run dev
+    ```
+
+3.  Acesse a aplicação no navegador:
+    *   Geralmente em: `http://localhost:5173`
+
+## 🧪 Testes
+
+### Testes de Simulação (Backend)
+O projeto inclui um script de teste de integração que simula um fluxo completo de uso da API.
 
 ```bash
+# Na raiz do projeto
 npx ts-node scripts/test-simulation.ts
 ```
+> **Nota**: Este script limpa o banco e cria cenários de teste para validar Login, Criação de Chamados e Permissões.
 
-> **Nota**: O script limpa o banco de dados antes de rodar os testes. Use apenas em ambiente de desenvolvimento.
+## 📁 Estrutura de Pastas Importantes
 
-##  Front-end (Fase 7)
+```
+Chamado-Web/
+├── src/                    # Código Fonte do Backend
+│   ├── controllers/        # Controladores (Entrada da API)
+│   ├── services/           # Regras de Negócio
+│   ├── repositories/       # Acesso ao Banco de Dados
+│   ├── routes/             # Definição das Rotas
+│   └── server.ts           # Entrada da Aplicação (Configuração Fastify/CORS)
+├── frontend/               # Código Fonte do Frontend
+│   ├── src/
+│   │   ├── pages/          # Páginas (Dashboard, Login, Admin, etc.)
+│   │   ├── contexts/       # Contextos React (Auth)
+│   │   └── services/       # Configuração API (Axios)
+└── prisma/                 # Configuração do Banco de Dados
+    ├── schema.prisma       # Definição das Tabelas
+    └── seed.ts             # Dados iniciais
+```
 
-O front-end está localizado na pasta `/frontend` e foi desenvolvido com React + TypeScript (Vite).
-
-###  Pré-requisitos
-- O backend deve estar rodando (localmente ou na AWS).
-- O backend agora possui **CORS habilitado** para aceitar requisições do frontend.
-
-###  Como Rodar o Front-end
-1. Entre na pasta do frontend:
-   ```bash
-   cd frontend
-   ```
-2. Instale as dependências:
-   ```bash
-   npm install
-   ```
-3. Crie um arquivo `.env` na raiz da pasta `frontend` para configurar a URL da API:
-   - Para rodar localmente:
-     ```env
-     VITE_API_URL=http://localhost:3333
-     ```
-   - Para rodar conectado à AWS (quando o deploy estiver feito):
-     ```env
-     VITE_API_URL=http://seu-ip-ou-dominio-aws:3333
-     ```
-4. Inicie o servidor de desenvolvimento:
-   ```bash
-   npm run dev
-   ```
-5. Acesse http://localhost:5173 no seu navegador.
-
-### ☁️ Integração com AWS
-O projeto foi preparado para que o backend seja hospedado na AWS (EC2, App Runner, etc).
-Para integrar o front-end (local ou também na nuvem) com o backend na AWS:
-1. Faça o deploy do backend na AWS.
-2. Obtenha o IP público ou domínio da instância.
-3. Atualize a variável `VITE_API_URL` no arquivo `.env` do frontend.
+## 📝 Notas Finais
+- **CORS**: O backend está configurado para aceitar requisições de qualquer origem (`origin: true`) para facilitar o desenvolvimento. Em produção, isso deve ser restrito.
+- **Segurança**: As senhas são criptografadas antes de serem salvas. Tokens JWT expiram em 1 dia.

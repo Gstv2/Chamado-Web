@@ -4,6 +4,7 @@ import { Login } from '../pages/Login';
 import { Register } from '../pages/Register';
 import { Dashboard } from '../pages/Dashboard';
 import { CreateChamado } from '../pages/CreateChamado';
+import { EditChamado } from '../pages/EditChamado';
 import { AdminChamados } from '../pages/AdminChamados';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -20,6 +21,7 @@ export function AppRoutes() {
             <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/chamados/new" element={<PrivateRoute><CreateChamado /></PrivateRoute>} />
+            <Route path="/chamados/edit/:id" element={<PrivateRoute><EditChamado /></PrivateRoute>} />
             <Route path="/admin" element={<PrivateRoute><AdminChamados /></PrivateRoute>} />
         </Routes>
     );

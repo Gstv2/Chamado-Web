@@ -24,10 +24,17 @@ app.addHook('onClose', async () => {
   await prisma.$disconnect()
 })
 
+// Hook para logar todas as requisições
+app.addHook('onRequest', async (request, reply) => {
+  console.log(`[REQUEST] ${request.method} ${request.url}`);
+});
+
 // 2.1 Configuração do CORS
 // Permite que o frontend (ex: localhost:5173) faça requisições para este backend
 app.register(cors, {
-  origin: true // Em produção, substitua por uma lista de domínios permitidos (ex: ['https://meuapp.com'])
+  origin: true, // Em produção, substitua por uma lista de domínios permitidos
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 })
 
 // 3. Configuração do JWT (JSON Web Token)

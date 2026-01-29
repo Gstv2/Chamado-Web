@@ -154,11 +154,10 @@ export async function chamadoRoutes(app: FastifyInstance, options: { prisma: Pri
     return chamadoController.update(request, reply);
   });
 
-  // DELETE /chamados/:id - Remove um chamado (Apenas Admin)
+  // DELETE /chamados/:id - Remove um chamado (Admin ou Dono)
   app.delete('/chamados/:id', {
-    preHandler: ensureAdmin,
     schema: {
-      description: 'Remove um chamado (Apenas Admin)',
+      description: 'Remove um chamado (Admin ou Dono)',
       tags: ['Chamados'],
       security: [{ bearerAuth: [] }],
       params: {

@@ -11,6 +11,7 @@ export function AdminChamados() {
         fetchTickets();
     }, []);
 
+    // Busca todos os chamados (Admin tem acesso a tudo)
     async function fetchTickets() {
         try {
             const response = await api.get<Chamado[]>('/chamados');
@@ -22,26 +23,34 @@ export function AdminChamados() {
         }
     }
 
+    // Atualiza o status de um chamado (ex: Resolver)
     const handleUpdateStatus = async (id: string, newStatus: string) => {
         try {
             await api.patch(`/chamados/${id}`, { status: newStatus });
-            fetchTickets(); // Recarrega a lista
-        } catch (error) {
+            fetchTickets(); // Recarrega a lista para refletir a mudança
+        } catch (error: any) {
             console.error('Erro ao atualizar status:', error);
+            const message = error.response?.data?.message || error.message || 'Erro ao atualizar status';
+            alert(message);
         }
     };
 
+    // Remove um chamado do sistema
     const handleDelete = async (id: string) => {
         if (!confirm('Tem certeza que deseja excluir este chamado?')) return;
 
         try {
             await api.delete(`/chamados/${id}`);
+            // Atualiza estado local
             setTickets(tickets.filter(t => t.id !== id));
-        } catch (error) {
+        } catch (error: any) {
             console.error('Erro ao deletar chamado:', error);
+            const message = error.response?.data?.message || error.message || 'Erro ao deletar chamado';
+            alert(message);
         }
     };
 
+    // Helper para classes CSS baseadas no status
     const getStatusBadgeClass = (status: string) => {
         switch (status) {
             case TicketStatus.ABERTO: return 'badge-gray';

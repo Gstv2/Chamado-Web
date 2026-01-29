@@ -11,13 +11,20 @@ export function Register() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
 
+    // Manipula o cadastro de novo usuário
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setIsSubmitting(true);
 
         try {
-            await api.post('/auth/register', { name, email, password });
+            // Faz a requisição direta para a API
+            await api.post('/users', { 
+                nome: name, 
+                email, 
+                senha: password 
+            });
+            // Redireciona para login após sucesso
             navigate('/login');
         } catch (err) {
             setError('Erro ao criar conta. Tente novamente.');
