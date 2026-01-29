@@ -2,12 +2,12 @@
 
 Sistema de gerenciamento de chamados para centralizar solicitações de suporte, desenvolvido como trabalho final da disciplina de Desenvolvimento Web.
 
-## 📝 Introdução
+##  Introdução
 Este projeto surge da necessidade de organizar o fluxo de solicitações de TI em pequenas e médias empresas, onde muitas vezes os pedidos são feitos de forma informal (WhatsApp, verbalmente ou anotações em papel).
 
 O **Chamado Web** é uma API RESTful robusta que permite o registro, acompanhamento e gestão dessas solicitações de forma centralizada, segura e auditável. O sistema foi projetado focando em boas práticas de engenharia de software, separação de responsabilidades e escalabilidade.
 
-## 🎯 Objetivo
+##  Objetivo
 Resolver o problema de descentralização de pedidos de suporte criando uma aplicação web simples e eficiente para registro e acompanhamento.
 
 ## 📈 Estratégia de Desenvolvimento
@@ -18,7 +18,7 @@ O desenvolvimento foi conduzido de forma incremental e iterativa, dividido em **
 3.  **Segurança e Robustez**: Implementamos autenticação (JWT) e validação rigorosa (Zod) apenas após ter o núcleo funcional, garantindo que a base estivesse sólida.
 4.  **Qualidade de Código**: Uso de TypeScript para tipagem estática, ESLint (implícito) e Prettier para padronização, e comentários educativos em todo o código.
 
-## 🏗 Arquitetura e Tecnologias
+##  Arquitetura e Tecnologias
 
 ### Back End
 - **Linguagem**: TypeScript (Node.js)
@@ -53,7 +53,7 @@ O projeto aplica diversos padrões de projeto clássicos e modernos para resolve
 6.  **Adapter Pattern**:
     *   **Uso**: O Fastify atua como um adaptador HTTP, e nossos Controllers adaptam as requisições Web para chamadas de método nos Services.
 
-## 🧩 Modelo de Dados
+##  Modelo de Dados
 
 ### Entidades Principais
 1. **User** (Usuários)
@@ -67,43 +67,43 @@ O projeto aplica diversos padrões de projeto clássicos e modernos para resolve
    - Campos: id, titulo, descricao, status, prioridade, usuarioId.
    - Relacionamento: Pertence a um Usuário.
 
-## 📋 Status do Projeto
+##  Status do Projeto
 
-### ✅ Fase 0: Preparação
+###  Fase 0: Preparação
 - Definição do escopo, problema e entidades.
 
-### ✅ Fase 1: Setup do Projeto
+###  Fase 1: Setup do Projeto
 - Configuração do ambiente (Node.js, TypeScript, Fastify).
 - Configuração do Prisma com SQLite.
 - Estruturação inicial de pastas.
 
-### ✅ Fase 2: Modelagem e Persistência
+###  Fase 2: Modelagem e Persistência
 - Criação dos Models no `schema.prisma`.
 - Implementação do **Repository Pattern** (`IUserRepository`, `IChamadoRepository`).
 - Criação de script de Seed (`prisma/seed.ts`) para popular o banco.
 
-### ✅ Fase 3: Autenticação e Autorização
+###  Fase 3: Autenticação e Autorização
 - Implementação de Hash de senha com `bcryptjs`.
 - Criação de Login com geração de JWT.
 - Middlewares: `ensureAuthenticated` e `ensureAdmin`.
 
-### ✅ Fase 4: CRUD e Regras de Negócio
+###  Fase 4: CRUD e Regras de Negócio
 - Implementação da Camada de Serviço (Services).
 - CRUD Completo de Chamados.
 - Refatoração para arquitetura Controller-Service-Repository.
 
-### ✅ Fase 5: Regras, Validações e Erros
+###  Fase 5: Regras, Validações e Erros
 - **Validação de Dados**: Uso da biblioteca **Zod** para garantir a integridade dos dados de entrada.
 - **Tratamento de Erros Global**: Implementação de `setErrorHandler` no Fastify.
 - **Classe AppError**: Padronização de erros de regra de negócio (Message + StatusCode).
 - **Robustez**: API preparada para lidar com falhas e entradas inválidas sem crashar.
 
-### ✅ Fase 6: Testes e Refinamento
+###  Fase 6: Testes e Refinamento
 - **Testes Manuais Automatizados**: Script para validar todos os endpoints (Login, CRUD, Permissões).
 - **Correções de Bugs**: Ajuste de rotas (PUT -> PATCH) e validações.
 - **Refinamento**: Revisão de código e comentários.
 
-## 🚀 Como Rodar
+##  Como Rodar
 
 1. **Instale as dependências**:
    ```bash
@@ -129,7 +129,7 @@ O projeto aplica diversos padrões de projeto clássicos e modernos para resolve
 5. **Acesse a documentação**:
    Abra `http://localhost:3333/documentation` no navegador para ver e testar a API via Swagger.
 
-## 🧪 Como Testar (Testes Automatizados)
+##  Como Testar (Testes Automatizados)
 
 Para rodar a suite de testes de simulação (que testa login, criação, listagem, atualização e deleção):
 
@@ -139,15 +139,15 @@ npx ts-node scripts/test-simulation.ts
 
 > **Nota**: O script limpa o banco de dados antes de rodar os testes. Use apenas em ambiente de desenvolvimento.
 
-## 🖥️ Front-end (Fase 7)
+##  Front-end (Fase 7)
 
 O front-end está localizado na pasta `/frontend` e foi desenvolvido com React + TypeScript (Vite).
 
-### ⚙️ Pré-requisitos
+###  Pré-requisitos
 - O backend deve estar rodando (localmente ou na AWS).
 - O backend agora possui **CORS habilitado** para aceitar requisições do frontend.
 
-### 🚀 Como Rodar o Front-end
+###  Como Rodar o Front-end
 1. Entre na pasta do frontend:
    ```bash
    cd frontend
