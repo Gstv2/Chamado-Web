@@ -33,8 +33,8 @@ export async function chamadoRoutes(app: FastifyInstance, options: { prisma: Pri
     return chamadoController.create(request, reply);
   });
 
-  // PUT /chamados/:id - Atualiza um chamado (status, prioridade, etc)
-  app.put('/chamados/:id', async (request, reply) => {
+  // PATCH /chamados/:id - Atualiza um chamado (status, prioridade, etc)
+  app.patch('/chamados/:id', async (request, reply) => {
     return chamadoController.update(request, reply);
   });
 

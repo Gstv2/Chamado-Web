@@ -2,47 +2,56 @@
 
 Sistema de gerenciamento de chamados para centralizar solicitações de suporte, desenvolvido como trabalho final da disciplina de Desenvolvimento Web.
 
+## 📝 Introdução
+Este projeto surge da necessidade de organizar o fluxo de solicitações de TI em pequenas e médias empresas, onde muitas vezes os pedidos são feitos de forma informal (WhatsApp, verbalmente ou anotações em papel).
+
+O **Chamado Web** é uma API RESTful robusta que permite o registro, acompanhamento e gestão dessas solicitações de forma centralizada, segura e auditável. O sistema foi projetado focando em boas práticas de engenharia de software, separação de responsabilidades e escalabilidade.
+
 ## 🎯 Objetivo
-Resolver o problema de descentralização de pedidos de suporte (WhatsApp, papel, verbal) criando uma aplicação web simples e eficiente para registro e acompanhamento.
+Resolver o problema de descentralização de pedidos de suporte criando uma aplicação web simples e eficiente para registro e acompanhamento.
+
+## 📈 Estratégia de Desenvolvimento
+O desenvolvimento foi conduzido de forma incremental e iterativa, dividido em **Fases** bem definidas para garantir a entrega contínua de valor e a facilidade de manutenção.
+
+1.  **Foco no MVP (Minimum Viable Product)**: Priorizamos as funcionalidades essenciais (CRUD de Chamados e Usuários) nas primeiras fases.
+2.  **Arquitetura Evolutiva**: Começamos com uma estrutura simples e refatoramos para uma arquitetura em camadas (Controller-Service-Repository) na Fase 4, quando a complexidade exigiu.
+3.  **Segurança e Robustez**: Implementamos autenticação (JWT) e validação rigorosa (Zod) apenas após ter o núcleo funcional, garantindo que a base estivesse sólida.
+4.  **Qualidade de Código**: Uso de TypeScript para tipagem estática, ESLint (implícito) e Prettier para padronização, e comentários educativos em todo o código.
 
 ## 🏗 Arquitetura e Tecnologias
 
 ### Back End
 - **Linguagem**: TypeScript (Node.js)
-- **Framework Web**: Fastify
-- **ORM**: Prisma
-- **Banco de Dados**: SQLite (Ambiente de Desenvolvimento)
+- **Framework Web**: Fastify (Alta performance e baixo overhead)
+- **ORM**: Prisma (Segurança de tipos e facilidade de migração)
+- **Banco de Dados**: SQLite (Ideal para desenvolvimento e prototipagem rápida)
 - **Autenticação**: JWT (@fastify/jwt) + Bcrypt (bcryptjs)
 - **Documentação**: Swagger UI (@fastify/swagger)
+- **Validação**: Zod (Schema Validation)
 
-### Padrões de Projeto (Architecture Patterns)
-O projeto segue uma arquitetura em camadas bem definida para garantir escalabilidade e manutenção:
+### Padrões de Projeto (Design Patterns)
+O projeto aplica diversos padrões de projeto clássicos e modernos para resolver problemas comuns de arquitetura:
 
-1.  **Routes** (`src/routes`):
-    *   Definem os endpoints da API.
-    *   Configuram middlewares e injetam dependências.
-    *   Fluxo: Rota -> Controller.
+1.  **Repository Pattern**:
+    *   **Problema**: Código de negócio acoplado diretamente ao banco de dados.
+    *   **Solução**: Abstração do acesso a dados em classes `Repository`. Permite trocar o ORM ou o Banco sem afetar as regras de negócio.
 
-2.  **Controllers** (`src/controllers`):
-    *   Gerenciam a entrada (Request) e saída (Reply) HTTP.
-    *   Validam dados básicos de entrada.
-    *   Fluxo: Controller -> Service.
+2.  **Service Layer (Business Logic Layer)**:
+    *   **Problema**: Regras de negócio espalhadas nos Controllers.
+    *   **Solução**: Centralização de toda a lógica (validações de negócio, cálculos) em classes `Service`. Os Controllers tornam-se apenas "porteiros" HTTP.
 
-3.  **Services** (`src/services`):
-    *   Contêm TODA a **Regra de Negócio** (ex: verificar senha, validar existência, filtrar por permissão).
-    *   São agnósticos ao protocolo HTTP (não conhecem Request/Reply).
-    *   Fluxo: Service -> Repository.
+3.  **Dependency Injection (DI)**:
+    *   **Problema**: Alto acoplamento entre classes (Service criando instância de Repository com `new`).
+    *   **Solução**: As dependências são injetadas via construtor (ex: `UserService` recebe `IUserRepository`). Facilita testes unitários (Mocking).
 
-4.  **Repositories** (`src/repositories`):
-    *   Implementam o acesso direto aos dados (Banco de Dados).
-    *   Seguem o **Repository Pattern** definidos pelas Interfaces.
-    *   Fluxo: Repository -> Prisma (Banco).
+4.  **Singleton**:
+    *   **Uso**: O `PrismaClient` é instanciado uma única vez em `server.ts` e compartilhado por toda a aplicação para gerenciar eficientemente o pool de conexões.
 
-5.  **Interfaces** (`src/interfaces`):
-    *   Contratos que definem os métodos obrigatórios dos repositórios.
+5.  **DTO (Data Transfer Object)**:
+    *   **Uso**: Objetos simples (frequentemente inferidos pelo Zod ou interfaces manuais) usados para transportar dados entre as camadas, garantindo que a senha do usuário não trafegue na resposta, por exemplo.
 
-6.  **Singleton**:
-    *   O `PrismaClient` é instanciado uma única vez para gerenciar conexões eficientemente.
+6.  **Adapter Pattern**:
+    *   **Uso**: O Fastify atua como um adaptador HTTP, e nossos Controllers adaptam as requisições Web para chamadas de método nos Services.
 
 ## 🧩 Modelo de Dados
 
@@ -78,14 +87,21 @@ O projeto segue uma arquitetura em camadas bem definida para garantir escalabili
 - Criação de Login com geração de JWT.
 - Middlewares: `ensureAuthenticated` e `ensureAdmin`.
 
-### ✅ Fase 4: CRUD e Regras de Negócio (Atual)
-- **Implementação da Camada de Serviço (Services)**:
-  - `UserService`: Lógica de criação e autenticação.
-  - `ChamadoService`: Lógica de CRUD e filtros por role.
-- **CRUD Completo de Chamados**:
-  - Listagem (Admin vê tudo, User vê seus).
-  - Detalhes, Criação, Atualização e Exclusão.
-- **Refatoração**: Padronização de todo o projeto para usar a arquitetura Controller-Service-Repository.
+### ✅ Fase 4: CRUD e Regras de Negócio
+- Implementação da Camada de Serviço (Services).
+- CRUD Completo de Chamados.
+- Refatoração para arquitetura Controller-Service-Repository.
+
+### ✅ Fase 5: Regras, Validações e Erros
+- **Validação de Dados**: Uso da biblioteca **Zod** para garantir a integridade dos dados de entrada.
+- **Tratamento de Erros Global**: Implementação de `setErrorHandler` no Fastify.
+- **Classe AppError**: Padronização de erros de regra de negócio (Message + StatusCode).
+- **Robustez**: API preparada para lidar com falhas e entradas inválidas sem crashar.
+
+### ✅ Fase 6: Testes e Refinamento
+- **Testes Manuais Automatizados**: Script para validar todos os endpoints (Login, CRUD, Permissões).
+- **Correções de Bugs**: Ajuste de rotas (PUT -> PATCH) e validações.
+- **Refinamento**: Revisão de código e comentários.
 
 ## 🚀 Como Rodar
 
@@ -112,3 +128,13 @@ O projeto segue uma arquitetura em camadas bem definida para garantir escalabili
 
 5. **Acesse a documentação**:
    Abra `http://localhost:3333/documentation` no navegador para ver e testar a API via Swagger.
+
+## 🧪 Como Testar (Testes Automatizados)
+
+Para rodar a suite de testes de simulação (que testa login, criação, listagem, atualização e deleção):
+
+```bash
+npx ts-node scripts/test-simulation.ts
+```
+
+> **Nota**: O script limpa o banco de dados antes de rodar os testes. Use apenas em ambiente de desenvolvimento.

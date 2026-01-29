@@ -1,10 +1,12 @@
-import Fastify from 'fastify'
+import Fastify, { FastifyError, FastifyReply, FastifyRequest } from 'fastify'
 import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
 import jwt from '@fastify/jwt'
 import { PrismaClient } from '@prisma/client'
 import { userRoutes } from './routes/users.routes'
 import { chamadoRoutes } from './routes/chamados.routes'
+import { AppError } from './utils/AppError'
+import { ZodError } from 'zod'
 
 // 1. Inicializa o Cliente Prisma (Singleton) no ponto de entrada
 // O PrismaClient gerencia a conexão com o banco de dados (SQLite neste caso)
@@ -55,14 +57,52 @@ app.get('/', async (request, reply) => {
   return { message: 'Bem-vindo à API do Chamado-Web!' };
 });
 
+// 7. Manipulador Global de Erros
+// Intercepta todos os erros lançados na aplicação para retornar respostas padronizadas
+app.setErrorHandler((error: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
+  // Erros de Validação do Zod
+  if (error instanceof ZodError) {
+    return reply.status(400).send({
+      message: 'Erro de validação.',
+      issues: error.format()
+    })
+  }
+
+  // Erros de Regra de Negócio (AppError)
+  if (error instanceof AppError) {
+    return reply.status(error.statusCode).send({
+      message: error.message
+    })
+  }
+
+  // Erros do Fastify/JWT (ex: Token inválido)
+  if (error.code === 'FST_JWT_NO_AUTHORIZATION_IN_HEADER' || error.code === 'FST_JWT_AUTHORIZATION_TOKEN_INVALID') {
+    return reply.status(401).send({
+      message: 'Token inválido ou não fornecido.'
+    })
+  }
+
+  // Erros Internos (não esperados)
+  app.log.error(error) // Loga o erro completo no console
+  return reply.status(500).send({
+    message: 'Internal Server Error'
+  })
+})
+
+
+// Exporta o app para testes
+export { app, prisma }
 
 // Inicialização do servidor na porta 3333
-app.listen({ port: 3333 })
-  .then(address => {
-    console.log(`🚀 Servidor rodando em: ${address}`)
-    console.log(`📝 Documentação Swagger em: ${address}/documentation`)
-  })
-  .catch(err => {
-    app.log.error(err)
-    process.exit(1)
-  })
+// Apenas inicia se este arquivo for o módulo principal (não importado por testes)
+if (require.main === module) {
+  app.listen({ port: 3333 })
+    .then(address => {
+      console.log(`🚀 Servidor rodando em: ${address}`)
+      console.log(`📝 Documentação Swagger em: ${address}/documentation`)
+    })
+    .catch(err => {
+      app.log.error(err)
+      process.exit(1)
+    })
+}
