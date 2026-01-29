@@ -25,6 +25,31 @@ export class ChamadoRepository implements IChamadoRepository {
   async findByUserId(userId: string): Promise<Chamado[]> {
     return this.prisma.chamado.findMany({
       where: { usuarioId: userId },
+      include: { usuario: true },
+    });
+  }
+
+  // Busca um chamado pelo ID
+  async findById(id: string): Promise<Chamado | null> {
+    return this.prisma.chamado.findUnique({
+      where: { id },
+      include: { usuario: true },
+    });
+  }
+
+  // Atualiza um chamado existente
+  async update(id: string, data: Prisma.ChamadoUpdateInput): Promise<Chamado> {
+    return this.prisma.chamado.update({
+      where: { id },
+      data,
+      include: { usuario: true },
+    });
+  }
+
+  // Remove um chamado pelo ID
+  async delete(id: string): Promise<void> {
+    await this.prisma.chamado.delete({
+      where: { id },
     });
   }
 }

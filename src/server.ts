@@ -50,6 +50,12 @@ app.register(swaggerUi, {
 app.register(userRoutes, { prisma })
 app.register(chamadoRoutes, { prisma })
 
+// Rota raiz de boas-vindas
+app.get('/', async (request, reply) => {
+  return { message: 'Bem-vindo à API do Chamado-Web!' };
+});
+
+
 // Inicialização do servidor na porta 3333
 app.listen({ port: 3333 })
   .then(address => {

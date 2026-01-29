@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { hash } from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
@@ -9,12 +10,16 @@ async function main() {
   await prisma.chamado.deleteMany()
   await prisma.user.deleteMany()
 
+  // Gerar hash para as senhas
+  const adminPassword = await hash('admin123', 6)
+  const userPassword = await hash('user123', 6)
+
   // Criar Usuários
   const admin = await prisma.user.create({
     data: {
       nome: 'Admin User',
       email: 'admin@example.com',
-      senha: 'hashed_password_123', // Em produção, use bcrypt
+      senha: adminPassword,
       role: 'ADMIN',
     },
   })
@@ -23,12 +28,12 @@ async function main() {
     data: {
       nome: 'Normal User',
       email: 'user@example.com',
-      senha: 'hashed_password_456',
+      senha: userPassword,
       role: 'USER',
     },
   })
 
-  console.log(`Created users: ${admin.nome}, ${user.nome}`)
+  console.log(`Created users: ${admin.nome} (pass: admin123), ${user.nome} (pass: user123)`)
 
   // Criar Chamados
   const chamado1 = await prisma.chamado.create({

@@ -11,4 +11,13 @@ export interface IChamadoRepository {
 
   // Busca todos os chamados associados a um usuário específico
   findByUserId(userId: string): Promise<Chamado[]>;
+
+  // Busca um chamado pelo ID
+  findById(id: string): Promise<Chamado | null>;
+
+  // Atualiza um chamado existente
+  update(id: string, data: Prisma.ChamadoUpdateInput): Promise<Chamado>;
+
+  // Remove um chamado pelo ID
+  delete(id: string): Promise<void>;
 }
