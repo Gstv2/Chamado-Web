@@ -1,5 +1,5 @@
-import api from '../api.js';
-import { requireAuth, isAdmin } from '../auth.js';
+import api from '../api.js?v=4';
+import { requireAuth, isAdmin } from '../auth.js?v=4';
 
 requireAuth();
 
@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div style="font-weight: 500;">${ticket.titulo}</div>
             <div style="font-size: 0.8rem; color: #a4b0be;">#${ticket.id}</div>
           </td>
+          <td>${ticket.usuario ? (ticket.usuario.nome || ticket.usuario.email || 'Usuário') : 'N/A'}</td>
           <td><span class="badge badge-${ticket.status.toLowerCase()}">${ticket.status.replace('_', ' ')}</span></td>
           <td><span class="badge badge-${ticket.prioridade.toLowerCase()}">${ticket.prioridade}</span></td>
           <td>

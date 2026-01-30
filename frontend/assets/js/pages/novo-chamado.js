@@ -1,5 +1,5 @@
-import api from '../api.js';
-import { requireAuth } from '../auth.js';
+import api from '../api.js?v=4';
+import { requireAuth } from '../auth.js?v=4';
 
 requireAuth();
 

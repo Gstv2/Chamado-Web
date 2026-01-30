@@ -1,5 +1,5 @@
 // Global main script
-import { getUser, logout } from './auth.js';
+import { getUser, logout } from './auth.js?v=4';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Setup Mobile Toggle

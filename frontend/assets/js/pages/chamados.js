@@ -1,5 +1,5 @@
-import api from '../api.js';
-import { requireAuth, getUser, isAdmin } from '../auth.js';
+import api from '../api.js?v=4';
+import { requireAuth, getUser, isAdmin } from '../auth.js?v=4';
 
 requireAuth();
 
@@ -78,6 +78,7 @@ function renderTable(tickets) {
           <div style="font-weight: 500;">${ticket.titulo}</div>
           <div style="font-size: 0.8rem; color: #a4b0be;">#${ticket.id}</div>
         </td>
+        <td>${ticket.usuario ? (ticket.usuario.nome || ticket.usuario.email || 'Usuário') : 'N/A'}</td>
         <td><span class="badge ${statusBadge}">${ticket.status.replace('_', ' ')}</span></td>
         <td><span class="badge ${priorityBadge}">${ticket.prioridade}</span></td>
         <td>
@@ -122,7 +123,7 @@ function attachActionListeners() {
           alert('Chamado excluído com sucesso!');
         } catch (error) {
           console.error(error);
-          alert('Erro ao excluir chamado');
+          alert('Erro ao excluir chamado: ' + (error.message || 'Erro desconhecido'));
         }
       }
     });
@@ -169,6 +170,11 @@ function openModal(ticket, mode) {
         </div>
 
         <div class="form-group">
+          <label class="form-label">Criado por</label>
+          <input type="text" class="form-control" value="${ticket.usuario ? (ticket.usuario.nome || ticket.usuario.email || 'Usuário') : 'N/A'}" disabled style="background: #f5f6fa;">
+        </div>
+
+        <div class="form-group">
           <label class="form-label" for="edit-status">Status</label>
           <select id="edit-status" class="form-control" required>
             <option value="ABERTO" ${ticket.status === 'ABERTO' ? 'selected' : ''}>ABERTO</option>
@@ -206,6 +212,11 @@ function openModal(ticket, mode) {
       <div class="form-group">
         <label class="form-label">Título</label>
         <div style="padding: 10px; background: #f5f6fa; border-radius: 4px;">${ticket.titulo}</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Criado por</label>
+        <div style="padding: 10px; background: #f5f6fa; border-radius: 4px;">${ticket.usuario ? (ticket.usuario.nome || ticket.usuario.email || 'Usuário') : 'N/A'}</div>
       </div>
 
       <div class="form-group">
@@ -256,13 +267,16 @@ async function handleFormSubmit(e) {
     // Get current ticket to preserve other fields
     const currentTicket = await api.obterChamado(id);
     
-    const updatedTicket = { 
-      ...currentTicket, 
+    // Construct clean payload with only allowed fields
+    const payload = {
+      id: Number(id), // Include ID as number just in case
+      titulo: currentTicket.titulo,
+      descricao: currentTicket.descricao,
       status: newStatus,
-      prioridade: newPriority 
+      prioridade: newPriority
     };
     
-    await api.atualizarChamado(id, updatedTicket);
+    await api.atualizarChamado(id, payload);
     
     alert('Chamado atualizado com sucesso!');
     document.getElementById('edit-modal').classList.remove('active');

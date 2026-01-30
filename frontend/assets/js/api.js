@@ -17,8 +17,18 @@ const handleResponse = async (response) => {
   const data = isJson ? await response.json() : null;
 
   if (!response.ok) {
-    const error = (data && data.message) || response.statusText;
-    throw new Error(error);
+    let errorMessage = response.statusText;
+    try {
+        if (data && data.message) {
+            errorMessage = data.message;
+        } else if (data && data.error) {
+            errorMessage = data.error;
+        } else if (typeof data === 'string') {
+            errorMessage = data;
+        }
+    } catch (e) { /* ignore parsing errors */ }
+    
+    throw new Error(errorMessage || `Erro ${response.status}`);
   }
   return data;
 };
@@ -33,11 +43,20 @@ const request = async (endpoint, options = {}) => {
     }
   };
 
+  // Fix: Remove Content-Type if no body is present (prevents "Body cannot be empty" error on DELETE/GET)
+  if (!config.body) {
+    delete config.headers['Content-Type'];
+  }
+
   try {
     const response = await fetch(url, config);
     return handleResponse(response);
   } catch (error) {
-    console.error(`API Error: ${error.message}`);
+    console.error(`API Error on ${endpoint}: ${error.message}`);
+    // Enhance network errors
+    if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+        throw new Error('Erro de conexão com o servidor. Verifique se a API está online ou se há bloqueio de CORS.');
+    }
     throw error;
   }
 };
@@ -67,7 +86,7 @@ export default {
   obterChamado: (id) => request(ENDPOINTS.CHAMADOS.DETAIL(id)),
 
   atualizarChamado: (id, data) => request(ENDPOINTS.CHAMADOS.UPDATE(id), {
-    method: 'PUT',
+    method: 'PATCH',
     body: JSON.stringify(data)
   }),
 

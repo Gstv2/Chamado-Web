@@ -1,10 +1,12 @@
+# HelpDesk+ Frontend Template
+
 Este é um template de front-end para o sistema HelpDesk+, desenvolvido com HTML5, CSS3 e JavaScript (ES Modules) puro, sem uso de frameworks.
 
 ## Estrutura do Projeto
 
 O projeto segue uma estrutura organizada e modular:
 
-
+```
 frontend/
 ├── assets/
 │   ├── css/
@@ -28,55 +30,55 @@ frontend/
 │   ├── novo-chamado.html   # Formulário de Criação
 │   └── perfil.html         # Perfil do Usuário
 └── index.html              # Redirecionamento inicial
-
+```
 
 ## Configuração da API
 
 O projeto está configurado para consumir a API REST em:
-*http://44.215.110.144:3333*
+**`http://44.215.110.144:3333`**
 
-Para alterar a URL da API, edite o arquivo assets/js/config.js.
+Para alterar a URL da API, edite o arquivo `assets/js/config.js`.
 
 ## Como Executar
 
 Para rodar o projeto corretamente (evitando bloqueios de segurança do navegador/CORS), é necessário usar um servidor local.
 
-*Opção 1 (Node.js instalado):*
-1. Abra o terminal na pasta do projeto (frontend).
+**Opção 1 (Node.js instalado):**
+1. Abra o terminal na pasta do projeto (`frontend`).
 2. Execute:
-   bash
+   ```bash
    npx serve .
-   
-3. Acesse http://localhost:3000
+   ```
+3. Acesse `http://localhost:3000`
 
-*Opção 2 (VS Code):*
-1. Instale a extensão *Live Server*.
-2. Clique com o botão direito em index.html e escolha "Open with Live Server".
+**Opção 2 (VS Code):**
+1. Instale a extensão **Live Server**.
+2. Clique com o botão direito em `index.html` e escolha "Open with Live Server".
 
-*Opção 3 (Python instalado):*
+**Opção 3 (Python instalado):**
 1. Execute no terminal:
-   bash
+   ```bash
    python -m http.server 3000
-   
-2. Acesse http://localhost:3000
+   ```
+2. Acesse `http://localhost:3000`
 
 ### Credenciais para Teste
 
 Utilize as credenciais cadastradas na API:
 
-*Administrador*:
-- Email: admin@admin.com
-- Senha: 123456
+**Administrador**:
+- Email: `admin@admin.com`
+- Senha: `123456`
 
-*Usuário Comum*:
-- Email: user@user.com
-- Senha: 123456
+**Usuário Comum**:
+- Email: `user@user.com`
+- Senha: `123456`
 
 ## Funcionalidades
 
-- *Autenticação*: Login com JWT e persistência em localStorage.
-- *Controle de Acesso*: Diferenciação visual e funcional entre ADMIN e USER.
-- *Gestão de Chamados*: Edição de status/prioridade via modal (Admin) e visualização detalhada (User).
-- *UI Personalizada*: Selects customizados e Badges de status.
-- *Layout Responsivo*: Sidebar colapsável em dispositivos móveis.
-- *Integração Real*: Consumo de endpoints REST (/auth, /chamados).
+- **Autenticação**: Login com JWT e persistência em localStorage.
+- **Controle de Acesso**: Diferenciação visual e funcional entre ADMIN e USER.
+- **Gestão de Chamados**: Edição de status/prioridade via modal (Admin) e visualização detalhada (User).
+- **UI Personalizada**: Selects customizados e Badges de status.
+- **Layout Responsivo**: Sidebar colapsável em dispositivos móveis.
+- **Integração Real**: Consumo de endpoints REST (/auth, /chamados).
